@@ -8,11 +8,80 @@
   padding: 20px;
 }
 
-.lotto-container h1 {
+.header-controls {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.header-controls h1 {
   color: white;
-  margin-bottom: 30px;
+  text-align: center;
   font-size: 2.5rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0;
+  flex: 1;
+}
+
+.player-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.player-name svg {
+  flex-shrink: 0;
+}
+
+.player-name span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.back-button {
+  position: static;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid white;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.back-button:active {
+  transform: scale(0.95);
+}
+
+.back-button svg {
+  width: 20px;
+  height: 20px;
 }
 
 .grid {
@@ -60,12 +129,23 @@
 
 .mark {
   position: absolute;
-  font-size: 32px;
-  font-weight: bold;
-  color: #ff6b6b;
-  top: -8px;
-  right: -8px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  color: #4caf50;
+  top: -6px;
+  right: -6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.mark svg {
+  stroke: #4caf50;
+  width: 14px;
+  height: 14px;
 }
 
 .cell.empty {
@@ -93,4 +173,177 @@ button:hover {
 
 button:active {
   transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .lotto-container {
+    padding: 10px;
+    min-height: 100vh;
+  }
+
+  .header-controls {
+    gap: 12px;
+    margin-bottom: 15px;
+  }
+
+  .back-button {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .lotto-container h1 {
+    font-size: 1.8rem;
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(9, 50px);
+    grid-gap: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .cell {
+    width: 50px;
+    height: 50px;
+    font-size: 14px;
+    border: 1.5px solid #e0e0e0;
+  }
+
+  .mark {
+    width: 22px;
+    height: 22px;
+    top: -5px;
+    right: -5px;
+  }
+
+  .mark svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  button {
+    padding: 10px 25px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lotto-container {
+    padding: 8px;
+  }
+
+  .header-controls {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .back-button {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .lotto-container h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+  }
+
+  .grid {
+    grid-template-columns: repeat(9, 38px);
+    grid-gap: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+
+  .cell {
+    width: 38px;
+    height: 38px;
+    font-size: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+  }
+
+  .cell.filled:hover {
+    transform: scale(1.02);
+  }
+
+  .mark {
+    width: 20px;
+    height: 20px;
+    top: -4px;
+    right: -4px;
+  }
+
+  .mark svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 13px;
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 360px) {
+  .grid {
+    grid-template-columns: repeat(9, 32px);
+    grid-gap: 3px;
+    padding: 8px;
+  }
+
+  .header-controls {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .header-controls h1 {
+    font-size: 1.3rem;
+  }
+
+  .player-name {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .player-name span {
+    max-width: 100px;
+  }
+
+  .back-button {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .cell {
+    width: 32px;
+    height: 32px;
+    font-size: 10px;
+  }
+
+  .mark {
+    width: 18px;
+    height: 18px;
+    top: -3px;
+    right: -3px;
+  }
+
+  .mark svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  button {
+    padding: 8px 15px;
+    font-size: 12px;
+  }
 }

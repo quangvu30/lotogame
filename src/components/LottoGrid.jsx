@@ -2,9 +2,10 @@ import { useState } from "react";
 import { generateMatrix9x9 } from "../utils/generator";
 import "./LottoGrid.css";
 
-export default function LottoGrid() {
+export default function LottoGrid({ onBack, playerName }) {
   const [grid, setGrid] = useState(generateMatrix9x9());
   const [marked, setMarked] = useState(new Set());
+  const [showGenerateButton, setShowGenerateButton] = useState(false);
 
   const handleGenerateNewGrid = () => {
     setGrid(generateMatrix9x9());
@@ -34,7 +35,41 @@ export default function LottoGrid() {
   console.log("test", test);
   return (
     <div className="lotto-container">
-      <h1>Lotto Grid</h1>
+      <div className="header-controls">
+        {onBack && (
+          <button className="back-button" onClick={onBack} title="Quay lại">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </button>
+        )}
+        <h1>Lô Tô Show</h1>
+        {playerName && (
+          <div className="player-name">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>{playerName}</span>
+          </div>
+        )}
+      </div>
       <div className="grid">
         {grid.map((row, rowIndex) => (
           <div key={rowIndex} className="row">
@@ -50,7 +85,20 @@ export default function LottoGrid() {
                   <>
                     {cell}
                     {marked.has(`${rowIndex}-${colIndex}`) && (
-                      <span className="mark">✕</span>
+                      <span className="mark">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
                     )}
                   </>
                 )}
@@ -59,7 +107,9 @@ export default function LottoGrid() {
           </div>
         ))}
       </div>
-      <button onClick={handleGenerateNewGrid}>Generate New Grid</button>
+      {showGenerateButton && (
+        <button onClick={handleGenerateNewGrid}>Lấy phiếu mới</button>
+      )}
     </div>
   );
 }
