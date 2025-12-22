@@ -7,28 +7,69 @@ export default function HomePage() {
   const [showNameForm, setShowNameForm] = useState(false);
   const [playerName, setPlayerName] = useState("");
   const [nameInput, setNameInput] = useState("");
+  const [ws, setWs] = useState(null);
+  const [connectionError, setConnectionError] = useState("");
 
   const handlePlayClick = () => {
     setShowNameForm(true);
+    setConnectionError("");
   };
 
   const handleNameSubmit = (e) => {
     e.preventDefault();
     if (nameInput.trim()) {
-      setPlayerName(nameInput.trim());
-      setShowNameForm(false);
-      setShowGame(true);
+      const name = nameInput.trim();
+      setPlayerName(name);
+
+      // Connect to WebSocket
+      try {
+        const websocket = new WebSocket(
+          `ws://localhost:9001?clientName=${encodeURIComponent(name)}`
+        );
+
+        websocket.onopen = () => {
+          console.log("WebSocket connected for:", name);
+          setWs(websocket);
+          setShowNameForm(false);
+          setShowGame(true);
+        };
+
+        websocket.onerror = (error) => {
+          console.error("WebSocket error:", error);
+          setConnectionError(
+            "Không thể kết nối đến máy chủ. Vui lòng thử lại."
+          );
+        };
+
+        websocket.onclose = () => {
+          console.log("WebSocket disconnected");
+          setWs(null);
+        };
+
+        websocket.onmessage = (event) => {
+          console.log("Message from server:", event.data);
+          // Handle incoming messages here
+        };
+      } catch (error) {
+        console.error("Failed to create WebSocket:", error);
+        setConnectionError("Không thể kết nối đến máy chủ.");
+      }
     }
   };
 
   const handleBack = () => {
+    // Close WebSocket connection when going back
+    if (ws) {
+      ws.close();
+      setWs(null);
+    }
     setShowGame(false);
     setPlayerName("");
     setNameInput("");
   };
 
   if (showGame) {
-    return <LottoGrid onBack={handleBack} playerName={playerName} />;
+    return <LottoGrid onBack={handleBack} playerName={playerName} ws={ws} />;
   }
 
   return (
@@ -83,6 +124,9 @@ export default function HomePage() {
                 autoFocus
                 maxLength={30}
               />
+              {connectionError && (
+                <div className="connection-error">{connectionError}</div>
+              )}
               <div className="modal-buttons">
                 <button
                   type="submit"
@@ -94,7 +138,10 @@ export default function HomePage() {
                 <button
                   type="button"
                   className="cancel-button"
-                  onClick={() => setShowNameForm(false)}
+                  onClick={() => {
+                    setShowNameForm(false);
+                    setConnectionError("");
+                  }}
                 >
                   Hủy
                 </button>

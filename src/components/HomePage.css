@@ -330,6 +330,16 @@
   box-shadow: 0 0 0 3px rgba(126, 34, 206, 0.1);
 }
 
+.connection-error {
+  color: #e74c3c;
+  background: #ffe5e5;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border-left: 4px solid #e74c3c;
+  font-size: 0.9rem;
+  margin-top: -10px;
+}
+
 .modal-buttons {
   display: flex;
   gap: 10px;

@@ -4,37 +4,121 @@ import "./AdminPage.css";
 
 const NUMBERS = Array.from({ length: 90 }, (_, i) => i + 1);
 
-export default function AdminPage({ onBack, onLogout }) {
+export default function AdminPage({ onBack, onLogout, adminToken }) {
   const [activeTab, setActiveTab] = useState("dashboard"); // "dashboard" or "manual"
   const [currentNumber, setCurrentNumber] = useState(null);
-
   const [drawnNumbers, setDrawnNumbers] = useState([]);
   const [usedNumbers, setUsedNumbers] = useState(new Set());
-  const [connectedClients, setConnectedClients] = useState([
-    {
-      id: 1,
-      name: "Người chơi 1",
-      avatar: getRandomEmoji(),
-      connectedAt: new Date(),
-      status: "online",
-    },
-    {
-      id: 2,
-      name: "Người chơi 2",
-      avatar: getRandomEmoji(),
-      connectedAt: new Date(Date.now() - 300000),
-      status: "online",
-    },
-    {
-      id: 3,
-      name: "Người chơi 3",
-      avatar: getRandomEmoji(),
-      connectedAt: new Date(Date.now() - 600000),
-      status: "online",
-    },
-  ]);
+  const [connectedClients, setConnectedClients] = useState([]);
+  const [ws, setWs] = useState(null);
+  const [clientAvatars, setClientAvatars] = useState(new Map()); // Store avatars by clientId
+
+  useEffect(() => {
+    if (!adminToken) return;
+
+    // Connect to WebSocket with admin token as clientName
+    const websocket = new WebSocket(
+      `ws://localhost:9001?clientName=${encodeURIComponent(adminToken)}`
+    );
+
+    websocket.onopen = () => {
+      console.log("Admin WebSocket connected");
+      setWs(websocket);
+    };
+
+    websocket.onerror = (error) => {
+      console.error("Admin WebSocket error:", error);
+    };
+
+    websocket.onclose = () => {
+      console.log("Admin WebSocket disconnected");
+      setWs(null);
+    };
+
+    websocket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        console.log("Message from server:", message);
+
+        if (message.type === "count_users_online") {
+          // Map server data to client state
+          const clients = message.data.users.map((user) => {
+            // Preserve emoji for existing clients, generate new for new clients
+            let avatar;
+            setClientAvatars((prev) => {
+              if (prev.has(user.clientId)) {
+                avatar = prev.get(user.clientId);
+                return prev;
+              } else {
+                avatar = getRandomEmoji();
+                const newMap = new Map(prev);
+                newMap.set(user.clientId, avatar);
+                return newMap;
+              }
+            });
+
+            return {
+              id: user.clientId,
+              name: user.clientName,
+              avatar: avatar,
+              connectedAt: new Date(user.connectedAt),
+              status: "online",
+            };
+          });
+          setConnectedClients(clients);
+        } else if (message.type === "user_connected") {
+          // Add new user to the list
+          let newAvatar = getRandomEmoji();
+
+          setClientAvatars((prev) => {
+            if (!prev.has(message.clientId)) {
+              const newMap = new Map(prev);
+              newMap.set(message.clientId, newAvatar);
+              return newMap;
+            } else {
+              newAvatar = prev.get(message.clientId);
+              return prev;
+            }
+          });
+
+          setConnectedClients((prev) => {
+            // Check if user already exists
+            if (prev.some((client) => client.id === message.clientId)) {
+              return prev;
+            }
+
+            // Add new client
+            return [
+              ...prev,
+              {
+                id: message.clientId,
+                name: message.clientName,
+                avatar: newAvatar,
+                connectedAt: new Date(message.timestamp),
+                status: "online",
+              },
+            ];
+          });
+        }
+      } catch (error) {
+        console.error("Failed to parse message:", error);
+      }
+    };
+
+    // Cleanup on unmount
+    return () => {
+      if (websocket.readyState === WebSocket.OPEN) {
+        websocket.close();
+      }
+    };
+  }, [adminToken]);
 
   const handleLogout = () => {
+    // Close WebSocket connection on logout
+    if (ws) {
+      ws.close();
+      setWs(null);
+    }
     onLogout();
   };
 

@@ -64,7 +64,11 @@ export default function App() {
       );
     }
     return (
-      <AdminPage onBack={handleBackFromAdmin} onLogout={handleAdminLogout} />
+      <AdminPage
+        onBack={handleBackFromAdmin}
+        onLogout={handleAdminLogout}
+        adminToken={adminToken}
+      />
     );
   }
 
