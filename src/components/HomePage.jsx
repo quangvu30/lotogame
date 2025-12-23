@@ -27,11 +27,20 @@ export default function HomePage() {
           `ws://localhost:9001?clientName=${encodeURIComponent(name)}`
         );
 
+        let pingInterval;
+
         websocket.onopen = () => {
           console.log("WebSocket connected for:", name);
           setWs(websocket);
           setShowNameForm(false);
           setShowGame(true);
+
+          // Start sending ping every 5 seconds
+          pingInterval = setInterval(() => {
+            if (websocket.readyState === WebSocket.OPEN) {
+              websocket.send(JSON.stringify({ type: "ping" }));
+            }
+          }, 15000);
         };
 
         websocket.onerror = (error) => {
@@ -39,11 +48,17 @@ export default function HomePage() {
           setConnectionError(
             "Không thể kết nối đến máy chủ. Vui lòng thử lại."
           );
+          if (pingInterval) {
+            clearInterval(pingInterval);
+          }
         };
 
         websocket.onclose = () => {
           console.log("WebSocket disconnected");
           setWs(null);
+          if (pingInterval) {
+            clearInterval(pingInterval);
+          }
         };
 
         websocket.onmessage = (event) => {
@@ -79,15 +94,18 @@ export default function HomePage() {
 
       <div className="content">
         <div className="header">
-          <h1 className="title">LÔ TÔ SHOW</h1>
+          <h1 className="title">SSI LÔ TÔ SHOW</h1>
           <p className="subtitle">Trò Chơi Xổ Số Thú Vị & Hứa Hẹn</p>
         </div>
 
         <div className="features">
           <div className="feature">
             <div className="feature-icon">🎲</div>
-            <h3>Phát Sốngẫu nhiên</h3>
-            <p>Mỗi ô được lựa chọn ngẫu nhiên từ phạm vi riêng</p>
+            <h3>Dò số nhanh</h3>
+            <p>
+              Mỗi cột và hàng có 5 số. Cột đầu tiên có số từ 1-9 cột thứ hai từ
+              10-19, cho đến cột cuối cùng 80-89
+            </p>
           </div>
           <div className="feature">
             <div className="feature-icon">✓</div>
@@ -96,8 +114,8 @@ export default function HomePage() {
           </div>
           <div className="feature">
             <div className="feature-icon">🎯</div>
-            <h3>5x5 Ma Trận</h3>
-            <p>Mỗi hàng và cột có đúng 5 số</p>
+            <h3>Chiến thắng</h3>
+            <p>Dành chiến thắng khi được 1 hàng nhanh nhất</p>
           </div>
         </div>
 

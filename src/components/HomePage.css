@@ -81,12 +81,38 @@
   font-size: 5rem;
   font-weight: bold;
   margin-bottom: 15px;
-  text-shadow: 
-    0 0 20px rgba(255, 255, 255, 0.5),
-    0 0 40px rgba(255, 215, 0, 0.3),
-    2px 2px 4px rgba(0, 0, 0, 0.5);
-  letter-spacing: 3px;
-  animation: glow 2s ease-in-out infinite;
+  background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #54a0ff);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  animation: rainbowShift 3s ease infinite, bounce 2s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transform-style: preserve-3d;
+  font-family: 'Arial Black', 'Impact', 'Helvetica', sans-serif;
+}
+
+@keyframes rainbowShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes bounce {
+  0%, 100% { 
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateY(-10px) scale(1.05);
+  }
+  50% { 
+    transform: translateY(0) scale(1);
+  }
+  75% {
+    transform: translateY(-5px) scale(1.02);
+  }
 }
 
 @keyframes glow {

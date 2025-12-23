@@ -21,9 +21,18 @@ export default function AdminPage({ onBack, onLogout, adminToken }) {
       `ws://localhost:9001?clientName=${encodeURIComponent(adminToken)}`
     );
 
+    let pingInterval;
+
     websocket.onopen = () => {
       console.log("Admin WebSocket connected");
       setWs(websocket);
+
+      // Start sending ping every 5 seconds
+      pingInterval = setInterval(() => {
+        if (websocket.readyState === WebSocket.OPEN) {
+          websocket.send(JSON.stringify({ type: "ping" }));
+        }
+      }, 15000);
     };
 
     websocket.onerror = (error) => {
@@ -33,6 +42,9 @@ export default function AdminPage({ onBack, onLogout, adminToken }) {
     websocket.onclose = () => {
       console.log("Admin WebSocket disconnected");
       setWs(null);
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
     };
 
     websocket.onmessage = (event) => {
@@ -99,6 +111,19 @@ export default function AdminPage({ onBack, onLogout, adminToken }) {
               },
             ];
           });
+        } else if (message.type === "user_disconnected") {
+          // Remove disconnected user from the list
+          setConnectedClients((prev) =>
+            prev.filter((client) => client.id !== message.clientId)
+          );
+
+          // Optionally keep the avatar in case they reconnect
+          // Or remove it completely:
+          // setClientAvatars((prev) => {
+          //   const newMap = new Map(prev);
+          //   newMap.delete(message.clientId);
+          //   return newMap;
+          // });
         }
       } catch (error) {
         console.error("Failed to parse message:", error);
@@ -107,6 +132,9 @@ export default function AdminPage({ onBack, onLogout, adminToken }) {
 
     // Cleanup on unmount
     return () => {
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
       if (websocket.readyState === WebSocket.OPEN) {
         websocket.close();
       }
@@ -126,6 +154,11 @@ export default function AdminPage({ onBack, onLogout, adminToken }) {
     setCurrentNumber(null);
     setDrawnNumbers([]);
     setUsedNumbers(new Set());
+
+    // Send reset message to server to broadcast to all clients
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: "reset" }));
+    }
   };
 
   const undoLastNumber = () => {

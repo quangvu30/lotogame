@@ -1,14 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { generateMatrix9x9 } from "../utils/generator";
 import "./LottoGrid.css";
 
-export default function LottoGrid({ onBack, playerName }) {
-  const [grid, setGrid] = useState(generateMatrix9x9());
+export default function LottoGrid({ onBack, playerName, ws }) {
+  const [grid, setGrid] = useState(generateMatrix9x9(playerName));
   const [marked, setMarked] = useState(new Set());
-  const [showGenerateButton, setShowGenerateButton] = useState(false);
+  const [showGenerateButton, setShowGenerateButton] = useState(true);
 
+  // Listen for reset messages from admin
+  useEffect(() => {
+    if (!ws) return;
+
+    const handleMessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+
+        if (message.type === "reset") {
+          // Regenerate grid and clear marked cells
+          setGrid(generateMatrix9x9(playerName));
+          setMarked(new Set());
+        }
+      } catch (error) {
+        console.error("Failed to parse message:", error);
+      }
+    };
+
+    ws.addEventListener("message", handleMessage);
+
+    return () => {
+      ws.removeEventListener("message", handleMessage);
+    };
+  }, [ws, playerName]);
+
+  // let test = true;
+  // // check hàng
+  // grid.forEach((r, i) => (test = r.filter((x) => x !== null).length === 5));
+
+  // // check cột
+  // for (let c = 0; c < 9; c++) {
+  //   test = grid.map((r) => r[c]).filter((x) => x !== null).length === 5;
+  // }
+  // console.log("test", test);
   const handleGenerateNewGrid = () => {
-    setGrid(generateMatrix9x9());
+    setGrid(generateMatrix9x9(playerName));
     setMarked(new Set());
   };
 
@@ -24,15 +58,6 @@ export default function LottoGrid({ onBack, playerName }) {
     setMarked(newMarked);
   };
 
-  let test = true;
-  // check hàng
-  grid.forEach((r, i) => (test = r.filter((x) => x !== null).length === 5));
-
-  // check cột
-  for (let c = 0; c < 9; c++) {
-    test = grid.map((r) => r[c]).filter((x) => x !== null).length === 5;
-  }
-  console.log("test", test);
   return (
     <div className="lotto-container">
       <div className="header-controls">
