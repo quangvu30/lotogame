@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./HomePage.css";
 import LottoGrid from "./LottoGrid";
 
@@ -9,6 +9,16 @@ export default function HomePage() {
   const [nameInput, setNameInput] = useState("");
   const [ws, setWs] = useState(null);
   const [connectionError, setConnectionError] = useState("");
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
+
+  useEffect(() => {
+    // Generate QR code for current page URL
+    const currentUrl = window.location.href;
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
+      currentUrl
+    )}`;
+    setQrCodeUrl(qrApiUrl);
+  }, []);
 
   const handlePlayClick = () => {
     setShowNameForm(true);
@@ -24,7 +34,7 @@ export default function HomePage() {
       // Connect to WebSocket
       try {
         const websocket = new WebSocket(
-          `ws://localhost:9001?clientName=${encodeURIComponent(name)}`
+          `wss://lotows.photaichinh.org?clientName=${encodeURIComponent(name)}`
         );
 
         let pingInterval;
@@ -126,6 +136,13 @@ export default function HomePage() {
           <p>Bộ xổ số lô tô hiện đại với giao diện dễ thương</p>
           <p>Thêm niềm vui vào cuộc sống hàng ngày của bạn</p>
         </div>
+
+        {qrCodeUrl && (
+          <div className="qr-code-section">
+            <p className="qr-label">Quét mã QR để truy cập</p>
+            <img src={qrCodeUrl} alt="QR Code" className="qr-code" />
+          </div>
+        )}
       </div>
 
       {showNameForm && (

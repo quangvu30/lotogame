@@ -16,13 +16,16 @@ export default function LoginPage({ onLoginSuccess, onCancel }) {
       // Create Basic Auth credentials
       const credentials = btoa(`${username}:${password}`);
 
-      const response = await fetch("http://localhost:3000/api/login", {
-        method: "POST",
-        headers: {
-          Authorization: `Basic ${credentials}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        "https://lotoapi.photaichinh.org/api/login",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${credentials}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();

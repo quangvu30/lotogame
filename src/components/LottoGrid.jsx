@@ -6,6 +6,8 @@ export default function LottoGrid({ onBack, playerName, ws }) {
   const [grid, setGrid] = useState(generateMatrix9x9(playerName));
   const [marked, setMarked] = useState(new Set());
   const [showGenerateButton, setShowGenerateButton] = useState(true);
+  const [drawnNumbers, setDrawnNumbers] = useState([]);
+  const [currentNumber, setCurrentNumber] = useState(null);
 
   // Listen for reset messages from admin
   useEffect(() => {
@@ -19,6 +21,13 @@ export default function LottoGrid({ onBack, playerName, ws }) {
           // Regenerate grid and clear marked cells
           setGrid(generateMatrix9x9(playerName));
           setMarked(new Set());
+          setDrawnNumbers([]);
+          setCurrentNumber(null);
+        } else if (message.type === "pick_number") {
+          // Admin picked a number
+          const pickedNumber = message.data;
+          setCurrentNumber(pickedNumber);
+          setDrawnNumbers((prev) => [...prev, pickedNumber]);
         }
       } catch (error) {
         console.error("Failed to parse message:", error);
@@ -32,15 +41,6 @@ export default function LottoGrid({ onBack, playerName, ws }) {
     };
   }, [ws, playerName]);
 
-  // let test = true;
-  // // check hàng
-  // grid.forEach((r, i) => (test = r.filter((x) => x !== null).length === 5));
-
-  // // check cột
-  // for (let c = 0; c < 9; c++) {
-  //   test = grid.map((r) => r[c]).filter((x) => x !== null).length === 5;
-  // }
-  // console.log("test", test);
   const handleGenerateNewGrid = () => {
     setGrid(generateMatrix9x9(playerName));
     setMarked(new Set());
@@ -95,6 +95,25 @@ export default function LottoGrid({ onBack, playerName, ws }) {
           </div>
         )}
       </div>
+
+      {/* Drawn Numbers */}
+      {drawnNumbers.length > 0 && (
+        <div className="drawn-numbers-section">
+          <div className="drawn-numbers-list">
+            {drawnNumbers.map((num, idx) => (
+              <div
+                key={idx}
+                className={`drawn-number-circle ${
+                  idx === drawnNumbers.length - 1 ? "latest" : ""
+                }`}
+              >
+                {num}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="grid">
         {grid.map((row, rowIndex) => (
           <div key={rowIndex} className="row">

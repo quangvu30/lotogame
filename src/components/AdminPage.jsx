@@ -18,7 +18,9 @@ export default function AdminPage({ onBack, onLogout, adminToken }) {
 
     // Connect to WebSocket with admin token as clientName
     const websocket = new WebSocket(
-      `ws://localhost:9001?clientName=${encodeURIComponent(adminToken)}`
+      `wss://lotows.photaichinh.org?clientName=${encodeURIComponent(
+        adminToken
+      )}`
     );
 
     let pingInterval;
@@ -186,6 +188,16 @@ export default function AdminPage({ onBack, onLogout, adminToken }) {
     setDrawnNumbers([...drawnNumbers, num]);
     if (!usedNumbers.has(num)) {
       setUsedNumbers(new Set([...usedNumbers, num]));
+    }
+
+    // Broadcast picked number to all clients
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(
+        JSON.stringify({
+          type: "pick_number",
+          data: num,
+        })
+      );
     }
   };
 

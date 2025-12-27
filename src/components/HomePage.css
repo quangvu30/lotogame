@@ -276,6 +276,40 @@
   font-weight: 500;
 }
 
+/* QR Code Section */
+.qr-code-section {
+  margin-top: 40px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  display: inline-block;
+  animation: fadeIn 1s ease-out 1.2s both;
+}
+
+.qr-label {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.qr-code {
+  display: block;
+  width: 300px;
+  height: 300px;
+  border-radius: 15px;
+  background: white;
+  padding: 10px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.qr-code:hover {
+  transform: scale(1.05);
+}
+
 /* Name Modal */
 .name-modal {
   position: fixed;
@@ -438,6 +472,20 @@
 
   .modal-buttons {
     flex-direction: column;
+  }
+
+  .qr-code-section {
+    padding: 20px;
+    margin-top: 30px;
+  }
+
+  .qr-label {
+    font-size: 1rem;
+  }
+
+  .qr-code {
+    width: 200px;
+    height: 200px;
   }
 }
 

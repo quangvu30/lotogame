@@ -84,6 +84,69 @@
   height: 20px;
 }
 
+/* Drawn Numbers Section */
+.drawn-numbers-section {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.drawn-numbers-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.drawn-number-circle {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  color: #667eea;
+  font-weight: bold;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.drawn-number-circle.latest {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #1e3c72;
+  animation: pulse 1s ease-in-out;
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+  transform: scale(1.15);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1.15);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+}
+
+.drawn-number-circle:hover {
+  transform: scale(1.1);
+}
+
+.drawn-number-circle.latest:hover {
+  transform: scale(1.2);
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(9, 60px);
@@ -200,6 +263,26 @@ button:active {
     min-width: 200px;
   }
 
+  .drawn-numbers-section {
+    padding: 12px;
+    max-width: 100%;
+  }
+
+  .drawn-numbers-list {
+    gap: 10px;
+    max-height: 150px;
+  }
+
+  .drawn-number-circle {
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+  }
+
+  .drawn-number-circle.latest {
+    transform: scale(1.1);
+  }
+
   .grid {
     grid-template-columns: repeat(9, 50px);
     grid-gap: 6px;
@@ -254,6 +337,34 @@ button:active {
     margin-bottom: 0;
   }
 
+  .drawn-numbers-section {
+    padding: 10px;
+  }
+
+  .drawn-numbers-list {
+    gap: 8px;
+    max-height: 120px;
+  }
+
+  .drawn-number-circle {
+    width: 45px;
+    height: 45px;
+    font-size: 1.2rem;
+  }
+
+  .drawn-number-circle.latest {
+    transform: scale(1.08);
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1.08);
+    }
+    50% {
+      transform: scale(1.15);
+    }
+  }
+
   .grid {
     grid-template-columns: repeat(9, 38px);
     grid-gap: 4px;
@@ -294,6 +405,34 @@ button:active {
 }
 
 @media (max-width: 360px) {
+  .drawn-numbers-section {
+    padding: 8px;
+  }
+
+  .drawn-numbers-list {
+    gap: 6px;
+    max-height: 100px;
+  }
+
+  .drawn-number-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+
+  .drawn-number-circle.latest {
+    transform: scale(1.05);
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1.05);
+    }
+    50% {
+      transform: scale(1.12);
+    }
+  }
+
   .grid {
     grid-template-columns: repeat(9, 32px);
     grid-gap: 3px;
