@@ -5,7 +5,7 @@ import "./LottoGrid.css";
 export default function LottoGrid({ onBack, playerName, ws }) {
   const [grid, setGrid] = useState(generateMatrix9x9(playerName));
   const [marked, setMarked] = useState(new Set());
-  const [showGenerateButton, setShowGenerateButton] = useState(true);
+  const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [drawnNumbers, setDrawnNumbers] = useState([]);
   const [currentNumber, setCurrentNumber] = useState(null);
 
